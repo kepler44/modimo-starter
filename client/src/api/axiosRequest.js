@@ -5,7 +5,7 @@ import axios from "axios";
 const axiosRequest = axios.create({
 	baseURL: "http://localhost:8080",
 	validateStatus: function (status) {
-		return status === 200 || (status >= 400 && status < 500);
+		return status === 200 || status === 304 || (status >= 400 && status < 500);
 	},
 });
 

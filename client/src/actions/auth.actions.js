@@ -1,6 +1,16 @@
 import auth from "../api/auth";
 import { types } from "./auth.types";
 
+/**
+ * Profile
+ */
+export const verify = () => (dispatch) => {
+	auth.sendVerifyEmail();
+};
+
+/**
+ * User Auth
+ */
 export const login = (data) => (dispatch, callback) => {
 	auth.login(data).then(
 		(data) => {
@@ -78,10 +88,9 @@ export const logout = () => (dispatch) => {
 	});
 };
 
-export const verify = () => (dispatch) => {
-	auth.sendVerifyEmail();
-};
-
+/**
+ * Admin Auth
+ */
 export const superin = (data) => (dispatch, callback) => {
 	auth.superin(data).then(
 		(data) => {
@@ -121,9 +130,4 @@ export const superout = () => (dispatch) => {
 	dispatch({
 		type: types.SUPEROUT,
 	});
-};
-
-export const verifySession = () => (dispatch, callback) => {
-	//auth.verifySession();
-	callback({ success: "ok" });
 };

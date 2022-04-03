@@ -11,13 +11,13 @@ const initialState = {
 export function reducer(state = initialState, { type, payload }) {
 	switch (type) {
 		case types.SUPERIN_FAIL:
-			return { ...state, super: null };
+			return { ...state, super: undefined };
 		case types.SUPERIN_SUCCESS:
 			return { ...state, super: payload.user };
 		case types.SUPEROUT:
 			return { ...state, super: undefined };
 		case types.LOGIN_FAIL:
-			return { ...state, user: null };
+			return { ...state, user: undefined };
 		case types.LOGIN_SUCCESS:
 			return { ...state, user: payload.user };
 		case types.LOGOUT:

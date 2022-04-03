@@ -1,11 +1,10 @@
 import React, { Component, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { superin } from "../actions/auth.actions";
+import { Link, useNavigate } from "react-router-dom";
+import { superin, superout } from "../actions/auth.actions";
 import SignIn from "../pages/signin/signin";
 import { selectSuper } from "../reducers/auth.selector";
 import { verifyToken } from "../services/super.service";
-import { verifySession } from "./../actions/auth.actions";
 import { getSuperPrivateContent } from "./../services/super.service";
 
 const Content = () => {
@@ -126,6 +125,7 @@ const Admin = () => {
 	const dispatch = useDispatch();
 	const [userVerified, setUserVerified] = React.useState(false);
 	const user = useSelector(selectSuper);
+	const navigate = useNavigate();
 
 	React.useEffect(() => {
 		if (!user) {
@@ -136,14 +136,19 @@ const Admin = () => {
 		});
 	}, [user]);
 
+	const closeAdminSession = () => {
+		superout()(dispatch);
+		navigate("/");
+	};
+
 	const isFetching = user && !userVerified;
 
 	return (
 		<div className="container">
 			Admin area ('a@a.com'/'admin' to login or use 'node server.js addsuper email= password=' in command line)
-			<Link className="ms-5" to="/">
+			<div className="ms-5 btn-danger" onClick={closeAdminSession} type="button">
 				CLOSE ADMIN SESSION
-			</Link>
+			</div>
 			{isFetching && <h1>Session is loading...</h1>}
 			{!user && <SignIn login={superin} createUserDisallow={true} />}
 			{user && userVerified && <Content />}
