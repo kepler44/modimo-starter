@@ -1,0 +1,80 @@
+CREATE TABLE users (
+    id serial not null,
+    username varchar(255),
+    email varchar(255) UNIQUE,
+    password varchar(255),
+    createdAt timestamp,
+    updatedAt timestamp,
+    sessionexpired boolean default true,
+    emailverified boolean default false,
+    emailverificationtoken varchar,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+
+CREATE TABLE supers (
+    id serial not null,
+    email varchar(255) UNIQUE,
+    password varchar(255),
+    sessionexpired boolean default true,
+    emailverified boolean default false,
+    emailverificationtoken varchar
+
+);
+
+
+create table session_auth (
+    username varchar(255),
+    password varchar(255),
+    sessionid varchar,
+    sid varchar not null collate "default",
+    sess json not null,
+    expire timestamp(6) not null
+
+)
+WITH (OIDS=FALSE);
+
+
+/////////////////////////
+
+
+ALTER TABLE session_auth ADD CONSTRAINT session_pkey PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+CREATE INDEX "IDX_session_expire" ON "session" ("expire");
+
+
+
+
+
+Well, here’s a better version. This will only create the table, the constraint and the index if either doesn’t exist.
+CREATE TABLE IF NOT EXISTS myschema.session (
+  sid varchar NOT NULL COLLATE "default",
+  sess json NOT NULL,
+  expire timestamp(6) NOT NULL,
+  CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
+);
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON myschema.session ("expire");
+
+
+
+
+
+
+testdb=# \d users
+                                   Table "public.users"
+  Column   |           Type           |                     Modifiers
+-----------+--------------------------+----------------------------------------------------
+ id        | integer                  | not null default nextval('users_id_seq'::regclass)
+ username  | character varying(255)   |
+ email     | character varying(255)   |
+ password  | character varying(255)   |
+ createdAt | timestamp with time zone | not null
+ updatedAt | timestamp with time zone | not null
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (id)
+Referenced by:
+    TABLE "user_roles" CONSTRAINT "user_roles_userId_fkey" FOREIGN KEY ("userId") REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+
+// DEFAULT nextval('users_id_seq'::regclass)
+
+
