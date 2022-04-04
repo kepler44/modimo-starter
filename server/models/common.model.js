@@ -153,7 +153,7 @@ class model {
 	verifyToken = (req, res, next) => {
 		let token = req.headers[this.header_token_name];
 		if (!token) {
-			return res.status(403).send({
+			return res.status(200).send({
 				message: "No token provided!",
 			});
 		}

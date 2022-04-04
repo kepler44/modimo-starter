@@ -1,3 +1,7 @@
+-[BEGIN]-
+
+-1
+
 CREATE TABLE users (
     id serial not null,
     username varchar(255),
@@ -7,22 +11,24 @@ CREATE TABLE users (
     updatedAt timestamp,
     sessionexpired boolean default true,
     emailverified boolean default false,
-    emailverificationtoken varchar,
+    emailverificationtoken varchar
 
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
+-2
 
 CREATE TABLE supers (
     id serial not null,
     email varchar(255) UNIQUE,
     password varchar(255),
+    username varchar(255),
     sessionexpired boolean default true,
     emailverified boolean default false,
     emailverificationtoken varchar
 
 );
 
+-3
 
 create table session_auth (
     username varchar(255),
@@ -30,10 +36,33 @@ create table session_auth (
     sessionid varchar,
     sid varchar not null collate "default",
     sess json not null,
-    expire timestamp(6) not null
+    expire timestamp(6) not null,
+    CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
+);
 
-)
+-4
+
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON session_auth ("expire");
+
+-[END]-
+
+/////////////////////////
+
+    ,CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+/////////////////////////
+
 WITH (OIDS=FALSE);
+
+/////////////////////////
+
+
+CREATE TABLE IF NOT EXISTS myschema.session (
+  sid varchar NOT NULL COLLATE "default",
+  sess json NOT NULL,
+  expire timestamp(6) NOT NULL,
+  CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
+);
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON myschema.session ("expire");
 
 
 /////////////////////////

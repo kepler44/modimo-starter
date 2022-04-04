@@ -41,8 +41,8 @@ const pgSession = require("connect-pg-simple")(expressSession);
 
 const config1 = {
     connectionString: process.env.PG_URI,
-    max: 20,
-    idleTimeoutMillis: 30000,
+    max: 5,
+    idleTimeoutMillis: 1,
     connectionTimeoutMillis: 2000,
 };
 
@@ -199,28 +199,23 @@ app.post("/profile/verify/:token", [users.verifyToken], getVerifyEmailToken);
 /**
  * Static app paths.
  */
-/* app.use(
-    "/",
+app.use(
     express.static(path.join(__dirname, "client", "build"), {
         maxAge: 31557600000,
     })
-    app.get("*", function(req, res) {
+);
+app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
-); */
-
 var enforce = require("express-sslify");
 app.use(enforce.HTTPS({ trustProtoHeader: true }));
-
 if (process.env.NODE_ENV === "production") {
-    var enforce = require("express-sslify");
-    app.use(enforce.HTTPS({ trustProtoHeader: true }));
     /* 
-    app.use(express.static(path.join(__dirname, "client/build")));
+            app.use(express.static(path.join(__dirname, "client/build")));
 
-    app.get("*", function(req, res) {
-        res.sendFile(path.join(__dirname, "client/build", "index.html"));
-    }); */
+            app.get("*", function(req, res) {
+                res.sendFile(path.join(__dirname, "client/build", "index.html"));
+            }); */
     /* 
   app.use(express.static(path.join(__dirname, "public")));
 
@@ -229,17 +224,17 @@ app.get("/", function(req, res) {
 }); */
 }
 
-app.use(express.static(path.join(__dirname, "client/build")));
+/* app.use(express.static(path.join(__dirname, "client/build")));
 
-app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "client/build/index.html"));
-});
+        app.get("*", function(req, res) {
+            res.sendFile(path.join(__dirname, "client/build/index.html"));
+        }); */
 
 /* app.use(express.static(path.join(__dirname, "public")));
 
-app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-}); */
+        app.get("*", function(req, res) {
+            res.sendFile(path.join(__dirname, "public", "index.html"));
+        }); */
 
 /**
  * Error Handler.
@@ -247,14 +242,14 @@ app.get("*", function(req, res) {
 const errorHandler = require("errorhandler");
 app.use(errorHandler());
 /* if (process.env.NODE_ENV === "development") {
-    const errorHandler = require("errorhandler");
-    app.use(errorHandler());
-} else {
-    app.use((err, req, res, next) => {
-        console.error(err);
-        res.status(500).send("Server Error");
-    });
-} */
+            const errorHandler = require("errorhandler");
+            app.use(errorHandler());
+        } else {
+            app.use((err, req, res, next) => {
+                console.error(err);
+                res.status(500).send("Server Error");
+            });
+        } */
 
 /**
  * Start Express server.
@@ -266,16 +261,16 @@ if (!blockListen) {
 
     (async() => {
         /* const { key, cert } = await (async() => {
-            return new Promise((res, rej) => {
-                pem.createCertificate({ days: 1, selfSigned: true }, function(err, keys) {
-                    if (err) {
-                        rej();
-                    } else {
-                        res({ key: keys.serviceKey, cert: keys.certificate });
-                    }
-                });
-            });
-        })(); */
+                    return new Promise((res, rej) => {
+                        pem.createCertificate({ days: 1, selfSigned: true }, function(err, keys) {
+                            if (err) {
+                                rej();
+                            } else {
+                                res({ key: keys.serviceKey, cert: keys.certificate });
+                            }
+                        });
+                    });
+                })(); */
         const key = fs.readFileSync("key.pem");
         const cert = fs.readFileSync("cert.pem");
 
@@ -292,8 +287,8 @@ if (!blockListen) {
 }
 
 /*   app.listen(app.get("port"), () => {
-        console.log(`Server is listening on ${app.get("host")}:${app.get("port")}`);
-        console.log("  Press CTRL-C to stop\n");
-    }); */
+                console.log(`Server is listening on ${app.get("host")}:${app.get("port")}`);
+                console.log("  Press CTRL-C to stop\n");
+            }); */
 
 module.exports = app;
