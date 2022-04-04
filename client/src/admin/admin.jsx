@@ -6,6 +6,7 @@ import SignIn from "../pages/signin/signin";
 import { selectSuper } from "../reducers/auth.selector";
 import { verifyToken } from "../services/super.service";
 import { getSuperPrivateContent } from "./../services/super.service";
+import "./admin.scss";
 
 const Content = () => {
 	const [currentPage, setCurrentPage] = React.useState(0);
@@ -80,7 +81,7 @@ const Content = () => {
 						for (let i = start; i < end; i++) {
 							output.push(usersList[i]);
 						}
-						return usersList.map((user) => {
+						return output.map((user) => {
 							return (
 								<tr key={user.id}>
 									<th scope="row">{user.id}</th>
