@@ -20,9 +20,8 @@ dotenv.config({ path: ".env" });
 const app = express();
 
 const default_port = 8433;
-/* const enforce = require("express-sslify");
+const enforce = require("express-sslify");
 app.use(enforce.HTTPS({ trustProtoHeader: true }));
- */
 
 /**
  * Connect to PG.
