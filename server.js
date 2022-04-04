@@ -44,7 +44,6 @@ const config1 = {
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-    ssl: true,
 };
 
 const config2 = {
@@ -62,7 +61,7 @@ const config2 = {
 };
 //ssl: false,
 
-const pgPool = new pg.Pool(config2);
+const pgPool = new pg.Pool(config1);
 /* const pgPool = new pg.Pool({
     connectionString: process.env.PG_URI,
     ssl: {
