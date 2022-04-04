@@ -255,6 +255,7 @@ app.use(errorHandler());
  * Start Express server.
  */
 if (!blockListen) {
+    const http = require("http");
     const https = require("https");
     const fs = require("fs");
     const pem = require("pem");
@@ -274,12 +275,13 @@ if (!blockListen) {
         const key = fs.readFileSync("key.pem");
         const cert = fs.readFileSync("cert.pem");
 
-        const httpsServer = https.createServer({
+        const httpsServer = http.createServer(app);
+        /* const httpsServer = https.createServer({
                 key: key,
                 cert: cert,
             },
             app
-        );
+        ); */
         httpsServer.listen(app.get("port"), () => {
             console.log("HTTPS Server running on port " + app.get("port"));
         });
