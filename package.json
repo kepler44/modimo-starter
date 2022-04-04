@@ -17,6 +17,7 @@
         "express": "^4.17.3",
         "express-flash": "^0.0.2",
         "express-session": "^1.17.2",
+        "express-sslify": "^1.2.0",
         "helmet": "^5.0.2",
         "jsonwebtoken": "^8.5.1",
         "morgan": "^1.10.0",

@@ -19,6 +19,11 @@ dotenv.config({ path: ".env" });
  */
 const app = express();
 
+const default_port = 8433;
+/* const enforce = require("express-sslify");
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
+ */
+
 /**
  * Connect to PG.
  */
@@ -35,9 +40,18 @@ const config = {
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
+    ssl: {
+        rejectUnauthorized: false,
+    },
 };
 
 const pgPool = new pg.Pool(config);
+/* const pgPool = new pg.Pool({
+    connectionString: process.env.PG_URI,
+    ssl: {
+        rejectUnauthorized: false,
+    },
+}); */
 
 const pgStore = new pgSession({
     pool: pgPool,
@@ -54,7 +68,7 @@ function normalizedPort(defaultPort) {
 }
 
 app.set("host", process.env.HOST || "localhost");
-app.set("port", normalizedPort(8080));
+app.set("port", normalizedPort(process.env.PORT || default_port));
 app.use(compression());
 app.use(logger("dev"));
 app.use(bodyParser.json());
