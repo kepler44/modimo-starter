@@ -12,13 +12,15 @@ const NavbarProfile = () => {
 		verifyToken(dispatch, (res) => {
 			setUserVerified(res);
 		});
-	}, []);
+	}, [user]);
 	if (user) {
-		if (!userVerified) return;
-		<div className="btn btn-outline-success ms-2" type="button">
-			<span className="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
-			{user.username} (Profile)
-		</div>;
+		if (!userVerified)
+			return (
+				<div className="btn btn-outline-success ms-2" type="button">
+					<span className="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
+					{user.username} (Profile)
+				</div>
+			);
 		return (
 			<Link className="btn btn-outline-success ms-2" type="button" to="/profile">
 				{user.username} (Profile)
