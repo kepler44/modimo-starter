@@ -18,9 +18,11 @@ dotenv.config({ path: ".env" });
  */
 const app = express();
 
-const default_port = 5000;
-const enforce = require("express-sslify");
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
+const default_port = 5001;
+/* if (process.env.NODE_ENV !== "development") {
+    const enforce = require("express-sslify");
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
+} */
 
 /**
  * Connect to PG.
@@ -38,9 +40,9 @@ const config = {
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-    ssl: {
+    /*  ssl: {
         rejectUnauthorized: false,
-    },
+    }, */
 };
 
 const pgPool = new pg.Pool(config);
@@ -165,16 +167,20 @@ app.post("/profile/verify/:token", [users.verifyToken], getVerifyEmailToken);
 /**
  * Static app paths.
  */
-app.use(
+/* app.use(
     "/",
     express.static(path.join(__dirname, "client", "build"), {
         maxAge: 31557600000,
     })
-);
-app.get("*", function(req, res) {
+    app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
+); */
+app.use(express.static(path.join(__dirname, "public")));
 
+app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 /**
  * Error Handler.
  */
