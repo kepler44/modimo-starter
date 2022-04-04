@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 
 const compression = require("compression");
-const errorHandler = require("errorhandler");
 const flash = require("express-flash");
 
 const logger = require("morgan");
@@ -179,7 +178,9 @@ app.get("*", function(req, res) {
 /**
  * Error Handler.
  */
-if (process.env.NODE_ENV === "development") {
+const errorHandler = require("errorhandler");
+app.use(errorHandler());
+/* if (process.env.NODE_ENV === "development") {
     const errorHandler = require("errorhandler");
     app.use(errorHandler());
 } else {
@@ -187,7 +188,7 @@ if (process.env.NODE_ENV === "development") {
         console.error(err);
         res.status(500).send("Server Error");
     });
-}
+} */
 
 /**
  * Start Express server.
