@@ -14,6 +14,8 @@ import { login } from "./actions/auth.actions";
 function App() {
 	const location = useLocation();
 	const pathname = location.pathname.toLowerCase();
+
+	console.log(process.env.REACT_APP_CLIENT_ID);
 	if (pathname.startsWith("/admin")) {
 		return (
 			<React.Fragment>

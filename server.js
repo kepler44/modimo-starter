@@ -17,8 +17,16 @@ dotenv.config({ path: ".env" });
  * Create Express server.
  */
 const app = express();
-
-const default_port = 5001;
+app.use(function(request, response, next) {
+    if (!request.secure) {
+        return response.redirect("https://" + request.headers.host + request.url);
+    }
+    next();
+});
+/* app.get("*", function(req, res) {
+    res.redirect("https://" + req.headers.host + req.url);
+}); */
+const default_port = 8080;
 /* if (process.env.NODE_ENV !== "development") {
     const enforce = require("express-sslify");
     app.use(enforce.HTTPS({ trustProtoHeader: true }));
@@ -31,7 +39,15 @@ const pg = require("pg");
 const expressSession = require("express-session");
 const pgSession = require("connect-pg-simple")(expressSession);
 
-const config = {
+const config1 = {
+    connectionString: process.env.PG_URI,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+    ssl: true,
+};
+
+const config2 = {
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
     port: process.env.PG_PORT,
@@ -40,12 +56,13 @@ const config = {
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-    /*  ssl: {
-        rejectUnauthorized: false,
+    /* ssl: {
+        rejectUnauthorized: true,
     }, */
 };
+//ssl: false,
 
-const pgPool = new pg.Pool(config);
+const pgPool = new pg.Pool(config2);
 /* const pgPool = new pg.Pool({
     connectionString: process.env.PG_URI,
     ssl: {
@@ -74,6 +91,20 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(flash());
+/* app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "https://ajax.googleapis.com", "https://stackpath.bootstrapcdn.com"],
+                styleSrc: ["'self'"],
+                imgSrc: ["*", "data:"],
+                connectSrc: ["'self'"],
+                frameSrc: ["'self'"],
+            },
+        },
+    })
+); */
 
 app.use(
     expressSession({
@@ -86,9 +117,11 @@ app.use(
 
 app.disable("x-powered-by");
 if (process.env.NODE_ENV === "development") {
-    const cors = require("cors");
-    app.use(cors());
+    /*  const cors = require("cors");
+    app.use(cors()); */
 }
+const cors = require("cors");
+app.use(cors());
 
 /**
  * Primary app routes.
@@ -176,11 +209,39 @@ app.post("/profile/verify/:token", [users.verifyToken], getVerifyEmailToken);
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
 ); */
-app.use(express.static(path.join(__dirname, "public")));
+
+var enforce = require("express-sslify");
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
+
+if (process.env.NODE_ENV === "production") {
+    var enforce = require("express-sslify");
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
+    /* 
+    app.use(express.static(path.join(__dirname, "client/build")));
+
+    app.get("*", function(req, res) {
+        res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    }); */
+    /* 
+  app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", function(req, res) {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+}); */
+}
+
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "client/build/index.html"));
+});
+
+/* app.use(express.static(path.join(__dirname, "public")));
 
 app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+}); */
+
 /**
  * Error Handler.
  */
@@ -199,10 +260,41 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-if (!blockListen)
-    app.listen(app.get("port"), () => {
+if (!blockListen) {
+    const https = require("https");
+    const fs = require("fs");
+    const pem = require("pem");
+
+    (async() => {
+        /* const { key, cert } = await (async() => {
+            return new Promise((res, rej) => {
+                pem.createCertificate({ days: 1, selfSigned: true }, function(err, keys) {
+                    if (err) {
+                        rej();
+                    } else {
+                        res({ key: keys.serviceKey, cert: keys.certificate });
+                    }
+                });
+            });
+        })(); */
+        const key = fs.readFileSync("key.pem");
+        const cert = fs.readFileSync("cert.pem");
+
+        const httpsServer = https.createServer({
+                key: key,
+                cert: cert,
+            },
+            app
+        );
+        httpsServer.listen(app.get("port"), () => {
+            console.log("HTTPS Server running on port " + app.get("port"));
+        });
+    })();
+}
+
+/*   app.listen(app.get("port"), () => {
         console.log(`Server is listening on ${app.get("host")}:${app.get("port")}`);
         console.log("  Press CTRL-C to stop\n");
-    });
+    }); */
 
 module.exports = app;
