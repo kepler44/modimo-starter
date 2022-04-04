@@ -151,8 +151,14 @@ app.post("/profile/verify", [users.verifyToken], getVerifyEmail);
 app.post("/profile/verify/:token", [users.verifyToken], getVerifyEmailToken);
 
 /**
- * Error 404
+ * Static app paths.
  */
+app.use(
+    "/",
+    express.static(path.join(__dirname, "client", "build"), {
+        maxAge: 31557600000,
+    })
+);
 app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
