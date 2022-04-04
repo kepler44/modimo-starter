@@ -17,12 +17,12 @@ dotenv.config({ path: ".env" });
  * Create Express server.
  */
 const app = express();
-app.use(function(request, response, next) {
+/* app.use(function(request, response, next) {
     if (!request.secure) {
         return response.redirect("https://" + request.headers.host + request.url);
     }
     next();
-});
+}); */
 /* app.get("*", function(req, res) {
     res.redirect("https://" + req.headers.host + req.url);
 }); */
