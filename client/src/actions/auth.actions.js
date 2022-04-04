@@ -45,8 +45,8 @@ export const login = (data) => (dispatch, callback) => {
 	);
 };
 
-export const register = (data) => (dispatch, callback) => {
-	return auth.register(data).then(
+export const register = (_data) => (dispatch, callback) => {
+	return auth.register(_data).then(
 		(data) => {
 			if (data.errors) {
 				callback({ errors: data.errors });
@@ -59,7 +59,7 @@ export const register = (data) => (dispatch, callback) => {
 					//payload: { user: data },
 				});
 				verify()(dispatch);
-				login(data)(dispatch, callback);
+				login({ ..._data, remember: false })(dispatch, callback);
 				//callback({ success: true });
 			}
 			return Promise.resolve();
