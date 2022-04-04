@@ -116,11 +116,9 @@ app.use(
 
 app.disable("x-powered-by");
 if (process.env.NODE_ENV === "development") {
-    /*  const cors = require("cors");
-    app.use(cors()); */
+    const cors = require("cors");
+    app.use(cors());
 }
-const cors = require("cors");
-app.use(cors());
 
 /**
  * Primary app routes.
