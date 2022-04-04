@@ -1,4 +1,5 @@
 {
+    "homepage": "https://e-05.herokuapp.com/",
     "name": "modimo-test",
     "scripts": {
         "start": "node server.js",

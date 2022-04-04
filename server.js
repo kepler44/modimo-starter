@@ -18,7 +18,7 @@ dotenv.config({ path: ".env" });
  */
 const app = express();
 
-const default_port = 8433;
+const default_port = 5000;
 const enforce = require("express-sslify");
 app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
